@@ -1,15 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import {createContext, useState, useContext} from "react";
 import './App.css'
-import Static from "./components/Static/Static";
+import Counter from "./components/CustomHook/Counter"
+import CounterMemo from "./components/CounterMemo/CounterMemo"
 
+const ThemeContext = createContext();
+
+function ThemeProvider({children}){
+  const[theme,setTheme] = useState("light");
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "light" ? "dark": "light"));
+  }
+  return (
+      <ThemeContext.Provider value = {{theme,toggleTheme}}>
+        {children}
+      </ThemeContext.Provider>
+    )
+}
+
+function ThemeButton(){
+  const {theme,toggleTheme} = useContext(ThemeContext);
+  return (
+    <button onClick = {toggleTheme}
+     style = {{backgroundColor:theme === "light" ? "#FFF": "#333",
+      color: theme === "light" ? "#000": "#FFF"
+      }}> change theme</button>
+  )
+}
 
 function App() {
   return (
     <> 
-     <Static/>
+     <ThemeProvider>
+       <ThemeButton/>
+       <Counter/>
+     </ThemeProvider>
+     <CounterMemo/>
     </>
    
   );
